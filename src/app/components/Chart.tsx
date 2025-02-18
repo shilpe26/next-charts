@@ -11,15 +11,14 @@ import {
     Title,
     Tooltip,
     Legend,
-    ChartOptions,
-    ChartData,
 } from "chart.js";
 import { Bar, Line } from "react-chartjs-2";
+import CandlestickChart from "./CandlestickChart";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface ChartProps {
-    type: "line" | "bar" | "mixed" | "doubleAxis";
+    type: "line" | "bar" | "mixed" | "doubleAxis" | "candlestick";
 }
 
 const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
@@ -62,53 +61,13 @@ const doubleAxisData = {
 };
 
 const Chart: React.FC<ChartProps> = ({ type }) => {
-    const options: ChartOptions<"line"> = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: "top",
-            },
-        },
-        scales: type === "doubleAxis"
-            ? {
-                y: {
-                    type: "linear",
-                    position: "left" as "left", // Explicitly type it
-                },
-                y1: {
-                    type: "linear",
-                    position: "right" as "right",
-                    grid: {
-                        drawOnChartArea: false,
-                    },
-                },
-            }
-            : {
-                y: {
-                    type: "linear",
-                },
-            },
-    };
-    const barData: ChartData<"bar", number[], string> = {
-        labels: data.labels,
-        datasets: data.datasets.filter((dataset) => dataset.type !== "line"), 
-    };
-    const barOptions: ChartOptions<"bar"> = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: "top",
-            },
-        },
-    };
-
-
     return (
-        <div className="chart-container">
-            {type === "line" && <Line data={data} options={options} />}
-            {type === "bar" && <Bar data={barData} options={barOptions} />}
-            {type === "mixed" && <Bar data={{ ...data, datasets: data.datasets }} options={options} />}
-            {type === "doubleAxis" && <Line data={doubleAxisData} options={options} />}
+        <div className="mt-8">
+            {type === "line" && <Line data={data} />}
+            {type === "bar" && <Bar data={data} />}
+            {type === "mixed" && <Bar data={{ ...data, datasets: data.datasets }} />}
+            {type === "doubleAxis" && <Line data={doubleAxisData} />}
+            {type === "candlestick" && <CandlestickChart />}
         </div>
     );
 };
