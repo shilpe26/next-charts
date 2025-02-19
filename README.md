@@ -1,3 +1,29 @@
+# Chart Visualization Assignment
+
+Overview
+
+This project is a Next.js application that implements various chart types using React and a charting library (e.g., Chart.js or Recharts). The application consists of a chart.tsx component that renders the following chart types:
+
+Line Chart
+
+Bar Chart
+
+Mixed Chart (Line and Bar combined)
+
+Double Y-Axis Chart (Left-Y and Right-Y axis)
+
+Candlestick Chart
+
+## Features
+
+Interactive charts with dynamic data
+
+Responsive design
+
+Enhanced UI/UX for better visualization
+
+Supports multiple chart types
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
