@@ -18,29 +18,6 @@ const chartOptions = [
     { value: "candlestick", label: "Candlestick Chart" },
 ];
 
-const customStyles = {
-    control: (provided: any) => ({
-        ...provided,
-        backgroundColor: 'white',
-        borderColor: '#3182ce',
-        padding: '0.3rem',
-        borderRadius: '0.375rem',
-        cursor: 'pointer',
-        transition: '0.3s',
-    }),
-    option: (provided: any, state: { isSelected: any; }) => ({
-        ...provided,
-        backgroundColor: state.isSelected ? '#3182ce' : 'white',
-        color: state.isSelected ? 'green' : 'black',
-        padding: '0.75rem',
-        transition: 'background-color 0.3s',
-        '&:hover': {
-            backgroundColor: '#3182ce',
-            color: 'white',
-        },
-    }),
-};
-
 const ChartVisual = () => {
     const [chartType, setChartType] = useState<"line" | "bar" | "mixed" | "doubleAxis" | "candlestick">("line");
     const [searchTerm, setSearchTerm] = useState('');
@@ -71,17 +48,16 @@ const ChartVisual = () => {
                         value={searchTerm}
                         onChange={handleSearchChange}
                         placeholder="Search Symbol"
-                        className="w-full h-[47px] pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full h-9 pl-10 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-1 md:gap-16 items-center justify-end w-full">
+                <div className="flex flex-col md:flex-row gap-1 md:gap-8 items-center justify-end w-full">
 
 
                     <Select
                         options={chartOptions}
                         onChange={handleChange}
-                        styles={customStyles}
                         className="w-full md:w-48"
                         classNamePrefix="custom-select"
                         placeholder={
@@ -91,7 +67,7 @@ const ChartVisual = () => {
                             </div>
                         }
                     />
-                    <div className="w-full md:w-48 h-[47px] cursor-pointer">
+                    <div className="w-full md:w-48 cursor-pointer">
                         <Select
                             options={drawOptions}
                             value={drawOptions.find(option => option.value === drawType)}
@@ -104,37 +80,7 @@ const ChartVisual = () => {
                                     <span>Draw</span>
                                 </div>
                             }
-                            styles={{
-                                control: (provided) => ({
-                                    ...provided,
-                                    height: "47px",
-                                    minHeight: "47px",
-                                }),
-                                valueContainer: (provided) => ({
-                                    ...provided,
-                                    height: "47px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
 
-                                }),
-                                input: (provided) => ({
-                                    ...provided,
-                                    height: "47px",
-                                    margin: "0px",
-                                    padding: "0px",
-                                    textAlign: "center",
-                                }),
-                                placeholder: (provided) => ({
-                                    ...provided,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    width: "100%",
-                                    height: "100%",
-                                    textAlign: "center",
-                                }),
-                            }}
                         />
                     </div>
 
