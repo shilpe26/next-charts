@@ -1,4 +1,4 @@
-# Chart Visualization Assignment
+# Chart Visualization Assignment :bar_chart:
 
 Overview
 
