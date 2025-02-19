@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, useEffect } from "react";
 import Select, { SingleValue } from 'react-select';
-import Chart from "../components/Chart";
-import CandlestickChart from "../components/CandlestickChart";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("../components/Chart"), { ssr: false });
+const CandlestickChart = dynamic(() => import("../components/CandlestickChart"), { ssr: false });
+
 import { BsInfoSquareFill } from "react-icons/bs";
 import { MdOutlineTableRows } from "react-icons/md";
 import { FaPen } from "react-icons/fa";
