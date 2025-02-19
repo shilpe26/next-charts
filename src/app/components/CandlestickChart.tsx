@@ -1,52 +1,55 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 
 const CandlestickChart = () => {
     const [chartOptions] = useState<ApexOptions>({
-        chart: {
-            type: "candlestick",
-            height: 400,
-        },
-        title: {
-            text: "",
-            align: "left",
-        },
+        chart: { type: "candlestick", height: 400 },
+        title: { text: "", align: "left" },
         plotOptions: {
             candlestick: {
-                colors: {
-                    upward: "#00E396",
-                    downward: "#FF4560",
-                },
+                colors: { upward: "#00E396", downward: "#FF4560" },
             },
         },
-        xaxis: {
-            type: "datetime",
-        },
-        yaxis: {
-            show: true,
-        },
+        xaxis: { type: "datetime" },
+        yaxis: { show: true },
     });
 
-    const [chartSeries] = useState([
-        {
-            data: [
-                { x: new Date("2024-02-01").getTime(), y: [100, 110, 95, 105] },
-                { x: new Date("2024-02-02").getTime(), y: [105, 98, 95, 96] },
-                { x: new Date("2024-02-03").getTime(), y: [96, 105, 90, 102] },
-                { x: new Date("2024-02-04").getTime(), y: [102, 110, 100, 107] },
-                { x: new Date("2024-02-05").getTime(), y: [107, 100, 98, 99] },
-                { x: new Date("2024-02-06").getTime(), y: [99, 104, 96, 101] },
-                { x: new Date("2024-02-07").getTime(), y: [101, 98, 94, 96] },
-                { x: new Date("2024-02-08").getTime(), y: [96, 105, 95, 102] },
-                { x: new Date("2024-02-09").getTime(), y: [102, 99, 96, 97] },
-                { x: new Date("2024-02-10").getTime(), y: [97, 100, 94, 95] },
-                { x: new Date("2024-02-11").getTime(), y: [95, 103, 93, 100] },
-            ],
-        },
-    ]);
+    const [chartSeries, setChartSeries] = useState([{ data: [] }]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7"
+                );
+                if (!response.ok) throw new Error("Failed to fetch data");
+
+                const data = await response.json();
+
+                const transformedData = data.prices.map((price: number[], index: number) => {
+                    if (index < 4) return null;
+                    return {
+                        x: new Date(price[0]).getTime(),
+                        y: [
+                            data.prices[index - 3][1],
+                            Math.max(...data.prices.slice(index - 3, index + 1).map(p => p[1])),
+                            Math.min(...data.prices.slice(index - 3, index + 1).map(p => p[1])),
+                            price[1],
+                        ],
+                    };
+                }).filter(Boolean);
+
+                setChartSeries([{ data: transformedData }]);
+            } catch (error) {
+                console.error("Error fetching candlestick data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     return (
         <div>
