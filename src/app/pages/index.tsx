@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
-import Select from 'react-select';
+import React, { useState, useRef, useEffect } from "react";
+import Select, { SingleValue } from 'react-select';
 import Chart from "../components/Chart";
 import CandlestickChart from "../components/CandlestickChart";
 import { BsInfoSquareFill } from "react-icons/bs";
@@ -20,11 +20,15 @@ const chartOptions = [
 
 const ChartVisual = () => {
     const [chartType, setChartType] = useState<"line" | "bar" | "mixed" | "doubleAxis" | "candlestick">("line");
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [drawType, setDrawType] = useState<"draw" | "line" | "rectangle" | "circle" | "pen">("Draw");
-    const handleChange = (selectedOption: { value: ChartType; label: string }) => {
-        setChartType(selectedOption.value);
+    const handleChange = (selectedOption: SingleValue<{ value: ChartType; label: string }>) => {
+        if (selectedOption) {
+            setChartType(selectedOption.value);
+        }
     };
+
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
@@ -34,10 +38,74 @@ const ChartVisual = () => {
         { value: "line", label: "Line" },
         { value: "rectangle", label: "Rectangle" },
         { value: "circle", label: "Circle" },
-        { value: "pen", label: "Pen" },
     ];
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas || drawType === "draw") return;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
+        let drawing = false;
+        let startX = 0, startY = 0;
+        let currentX = 0, currentY = 0;
+        let imgData: ImageData | null = null;
+
+        const startDrawing = (e: MouseEvent) => {
+            drawing = true;
+            startX = e.offsetX;
+            startY = e.offsetY;
+            imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        };
+
+        const draw = (e: MouseEvent) => {
+            if (!drawing || !ctx || !imgData) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.putImageData(imgData, 0, 0);
+
+            currentX = e.offsetX;
+            currentY = e.offsetY;
+
+            ctx.beginPath();
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+
+            if (drawType === "line") {
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(currentX, currentY);
+            } else if (drawType === "rectangle") {
+                ctx.rect(startX, startY, currentX - startX, currentY - startY);
+            } else if (drawType === "circle") {
+                const radius = Math.sqrt(Math.pow(currentX - startX, 2) + Math.pow(currentY - startY, 2));
+                ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+            }
+
+            ctx.stroke();
+        };
+
+        const stopDrawing = () => {
+            drawing = false;
+        };
+
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mouseup", stopDrawing);
+
+        return () => {
+            canvas.removeEventListener("mousedown", startDrawing);
+            canvas.removeEventListener("mousemove", draw);
+            canvas.removeEventListener("mouseup", stopDrawing);
+        };
+    }, [drawType]);
+
+
 
     return (
+
         <div className="text-center p-5">
 
             <div className="flex flex-col gap-1 md:gap-0 md:flex-row justify-between border border-gray-300 shadow-lg p-4 rounded">
@@ -96,8 +164,12 @@ const ChartVisual = () => {
                 </div>
             </div>
 
-            {chartType === "candlestick" ? <CandlestickChart /> : <Chart type={chartType} />}
+            <div className="relative">
+                {chartType === "candlestick" ? <CandlestickChart /> : <Chart type={chartType} />}
+                <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full pointer-events-auto"></canvas>
+            </div>
         </div>
     );
 };
-export default ChartVisual;
+
+export default ChartVisual
