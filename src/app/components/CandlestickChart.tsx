@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -35,8 +36,8 @@ const CandlestickChart = () => {
                         x: new Date(price[0]).getTime(),
                         y: [
                             data.prices[index - 3][1],
-                            Math.max(...data.prices.slice(index - 3, index + 1).map(p => p[1])),
-                            Math.min(...data.prices.slice(index - 3, index + 1).map(p => p[1])),
+                            Math.max(...data.prices.slice(index - 3, index + 1).map((p: any[]) => p[1])),
+                            Math.min(...data.prices.slice(index - 3, index + 1).map((p: any[]) => p[1])),
                             price[1],
                         ],
                     };
