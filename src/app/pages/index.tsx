@@ -10,7 +10,7 @@ import { FcCandleSticks } from "react-icons/fc";
 import { FaSearch } from "react-icons/fa";
 
 type ChartType = "line" | "bar" | "mixed" | "doubleAxis" | "candlestick";
-const chartOptions = [
+const chartOptions: { value: ChartType; label: string }[] = [
     { value: "line", label: "Line Chart" },
     { value: "bar", label: "Bar Chart" },
     { value: "mixed", label: "Mixed Chart" },
@@ -18,16 +18,19 @@ const chartOptions = [
     { value: "candlestick", label: "Candlestick Chart" },
 ];
 
+
 const ChartVisual = () => {
     const [chartType, setChartType] = useState<"line" | "bar" | "mixed" | "doubleAxis" | "candlestick">("line");
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [drawType, setDrawType] = useState<"draw" | "line" | "rectangle" | "circle" | "pen">("Draw");
+    const [drawType, setDrawType] = useState<"draw" | "line" | "rectangle" | "circle" | "pen">("draw");
+
     const handleChange = (selectedOption: SingleValue<{ value: ChartType; label: string }>) => {
         if (selectedOption) {
             setChartType(selectedOption.value);
         }
     };
+
 
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
